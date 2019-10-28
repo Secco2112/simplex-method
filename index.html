@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Simplex</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link href="https://fonts.googleapis.com/css?family=Palanquin:100,200,300,400,500,600,700&display=swap" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel='stylesheet' type='text/css' href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel='stylesheet' type='text/css' media='screen' href='assets/css/main.css'>
+</head>
+<body>
+    <main class="wrapper-content">
+        <div class="content">
+            <h1 class="title">Simplex</h1>
+            <form id="form-data" action="" method="post" onsubmit="return false;">
+                <div class="header">
+                    <h3>Modelo:</h3>
+                </div>
+                <div class="form-group objective-function">
+                    <select class="form-control" name="type-function">
+                        <option value="max">Max.</option>
+                        <option value="min">Min.</option>
+                    </select>
+                    <span> Z = </span>
+                    <input name="x1" type="text" class="form-control" />
+                    <span> x1 </span>
+                    <select class="form-control" name="operation">
+                        <option value="plus">+</option>
+                        <option value="subtract">-</option>
+                    </select>
+                    <input name="x2" type="text" class="form-control" />
+                    <span> x2 </span>
+                </div>
+                <div class="form-group inequality-restrictions">
+                    <ul class="list-inequality-restrictions">
+                        <li class="inequality-restriction">
+                            <i class="fa fa-times delete-inequality-restriction"></i>
+                            <input name="x1" type="text" class="form-control" />
+                            <span> x1 </span>
+                            <select class="form-control" name="operation">
+                                <option value="plus">+</option>
+                                <option value="subtract">-</option>
+                            </select>
+                            <input name="x2" type="text" class="form-control" />
+                            <span> x2 </span>
+                        </li>
+                        <li class="inequality-restriction">
+                            <i class="fa fa-times delete-inequality-restriction"></i>
+                            <input name="x1" type="text" class="form-control" />
+                            <span> x1 </span>
+                            <select class="form-control" name="operation">
+                                <option value="plus">+</option>
+                                <option value="subtract">-</option>
+                            </select>
+                            <input name="x2" type="text" class="form-control" />
+                            <span> x2 </span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="form-group restrictions">
+                    <h6>Restrições</h6>
+                    <span>x1 >= 0</span>
+                    <span>x2 >= 0</span>
+                </div>
+                <div class="form-group options">
+                    <button class="add-variable btn btn-secondary">Adicionar variável</button>
+                    <button class="add-restriction-inequality btn btn-secondary">Adicionar inequação de restrição</button>
+                </div>
+            </form>
+        </div>
+    </main>
+</body>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="assets/js/Simplex.class.js"></script>
+    <script src='assets/js/script.js'></script>
+</html>
