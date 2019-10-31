@@ -50,9 +50,31 @@ body{
                     &.restrictions{
                         flex-direction: column;
                         align-items: flex-start;
+                        span{
+                            position: relative;
+                            padding-right: 25px;
+                            i{
+                                position: absolute;
+                                top: 5px;
+                                right: 0;
+                                cursor: pointer;
+                                color: red;
+                                font-size: 14px;
+                                opacity: 0;
+                                visibility: hidden;
+                                transition: 0.2s all ease-in-out;
+                            }
+                            &:hover{
+                                i{
+                                    opacity: 1;
+                                    visibility: visible;
+                                }
+                            }
+                        }
                     }
                     &.inequality-restrictions{
                         margin-left: 102px;
+                        margin-top: 32px;
                         .list-inequality-restrictions{
                             margin: 0;
                             padding: 0;
@@ -60,6 +82,11 @@ body{
                                 display: flex;
                                 align-items: center;
                                 position: relative;
+                                margin-top: 10px;
+                                .variable-group{
+                                    display: flex;
+                                    align-items: center;
+                                }
                                 i{
                                     position: absolute;
                                     top: 0px;
@@ -87,6 +114,16 @@ body{
                                 width: 270px;
                                 margin-left: 15px;
                             }
+                            &.calculate{
+                                width: 160px;
+                                margin-left: 15px;
+                            }
+                        }
+                    }
+                    &.objective-function{
+                        .variable-group{
+                            display: flex;
+                            align-items: center;
                         }
                     }
                 }

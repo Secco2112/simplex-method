@@ -24,49 +24,84 @@
                         <option value="min">Min.</option>
                     </select>
                     <span> Z = </span>
-                    <input name="x1" type="text" class="form-control" />
-                    <span> x1 </span>
+                    <div data-index="1" class="variable-group">
+                        <input name="x1" type="text" class="form-control" />
+                        <span> x1 </span>
+                    </div>
                     <select class="form-control" name="operation">
                         <option value="plus">+</option>
                         <option value="subtract">-</option>
                     </select>
-                    <input name="x2" type="text" class="form-control" />
-                    <span> x2 </span>
+                    <div data-index="2" class="variable-group">
+                        <input name="x2" type="text" class="form-control" />
+                        <span> x2 </span>
+                    </div>
                 </div>
                 <div class="form-group inequality-restrictions">
                     <ul class="list-inequality-restrictions">
                         <li class="inequality-restriction">
                             <i class="fa fa-times delete-inequality-restriction"></i>
-                            <input name="x1" type="text" class="form-control" />
-                            <span> x1 </span>
+                            <div data-index="1" class="variable-group">
+                                <input name="x1" type="text" class="form-control" />
+                                <span> x1 </span>
+                            </div>
                             <select class="form-control" name="operation">
                                 <option value="plus">+</option>
                                 <option value="subtract">-</option>
                             </select>
-                            <input name="x2" type="text" class="form-control" />
-                            <span> x2 </span>
+                            <div data-index="2" class="variable-group">
+                                <input name="x2" type="text" class="form-control" />
+                                <span> x2 </span>
+                            </div>
+                            <select class="form-control" name="equality">
+                                <option value="greater-equal">>=</option>
+                                <option value="smaller-equal"><=</option>
+                                <option value="equal">=</option>
+                                <option value="greater">></option>
+                                <option value="smaller"><</option>
+                            </select>
+                            <input name="b" type="text" class="form-control" />
                         </li>
                         <li class="inequality-restriction">
                             <i class="fa fa-times delete-inequality-restriction"></i>
-                            <input name="x1" type="text" class="form-control" />
-                            <span> x1 </span>
+                            <div data-index="1" class="variable-group">
+                                <input name="x1" type="text" class="form-control" />
+                                <span> x1 </span>
+                            </div>
                             <select class="form-control" name="operation">
                                 <option value="plus">+</option>
                                 <option value="subtract">-</option>
                             </select>
-                            <input name="x2" type="text" class="form-control" />
-                            <span> x2 </span>
+                            <div data-index="2" class="variable-group">
+                                <input name="x2" type="text" class="form-control" />
+                                <span> x2 </span>
+                            </div>
+                            <select class="form-control" name="equality">
+                                <option value="greater-equal">>=</option>
+                                <option value="smaller-equal"><=</option>
+                                <option value="equal">=</option>
+                                <option value="greater">></option>
+                                <option value="smaller"><</option>
+                            </select>
+                            <input name="b" type="text" class="form-control" />
                         </li>
                     </ul>
                 </div>
                 <div class="form-group restrictions">
                     <h6>Restrições</h6>
-                    <span>x1 >= 0</span>
-                    <span>x2 >= 0</span>
+                    <span data-index="1">
+                        <i class="delete-variable fa fa-times"></i>
+                        x1 >= 0
+                    </span>
+                    <span data-index="2">
+                        <i class="delete-variable fa fa-times"></i>
+                        x2 >= 0
+                    </span>
                 </div>
                 <div class="form-group options">
                     <button class="add-variable btn btn-secondary">Adicionar variável</button>
                     <button class="add-restriction-inequality btn btn-secondary">Adicionar inequação de restrição</button>
+                    <button class="calculate btn btn-primary">Calcular</button>
                 </div>
             </form>
         </div>
