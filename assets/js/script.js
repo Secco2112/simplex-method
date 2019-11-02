@@ -220,26 +220,26 @@ function calculate() {
 function showFormattedData() {
     var body_height = $("body").height(),
         current_height = $(".wrapper-content .content").height();
-    
-    $(".wrapper-content .content").animate(
-        {
-            height: body_height + current_height
-        },
-        500
-    );
-    // setTimeout(function() {
-    //     $(".wrapper-content .content").attr("style", "height: calc(100vh + " + current_height + "px)");
-    //     $("html, body").animate(
-    //         { scrollTop: current_height },
-    //         1000,
-    //         function() {
-    //             $(".formatted-values").css("marginTop", "180px");
 
-                
+    setTimeout(function() {
+        $(".wrapper-content .content").attr("style", "height: calc(100vh + " + current_height + "px)");
 
-    //             setTimeout(function() {
-    //                 $(".formatted-values").addClass("show");
-    //             }, 500);
-    //         });
-    // }, 500);
+        var formatted_oof = simplex.getFormattedOriginalObjetiveFunction();
+        var formatted_of = simplex.getFormattedObjectiveFunction();
+
+        $("html, body").animate(
+            { scrollTop: current_height },
+            1000,
+            function() {
+                $(".formatted-values").css("marginTop", "180px");
+
+                // Aplicar valores
+                $(".formatted-values .objective-function #original").text(formatted_oof);
+                $(".formatted-values .objective-function #formatted").text(formatted_of);
+
+                setTimeout(function() {
+                    $(".formatted-values").addClass("show");
+                }, 500);
+            });
+    }, 500);
 }

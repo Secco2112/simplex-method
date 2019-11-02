@@ -64,8 +64,41 @@ class Simplex{
     }
 
     getFormattedOriginalObjetiveFunction() {
-        var of = this.original_objective_function;
-        console.log(of);
+        var of = this.original_objective_function,
+            response = "Max. Z = ";
+        
+        var i = 0;
+        for(var o in of) {
+            var op = of[o] > 0? "+": "-";
+            var value = (of[o] == 1 || of[o] == -1? "": Math.abs(of[o]));
+            
+            if(i++ == 0) {
+                response += ((op == "-"? op: "") + value + o + " ");
+            } else {
+                response += (op + " " + value + o + " ");
+            }
+        }
+
+        return response;
+    }
+
+    getFormattedObjectiveFunction() {
+        var of = this.objective_function,
+            response = "";
+
+        var i = 0;
+        for(var o in of) {
+            var op = of[o] > 0? "+": "-";
+            var value = (of[o] == 1 || of[o] == -1? "": Math.abs(of[o]));
+
+            if(i++ == 0) {
+                response += ((op == "-"? op: "") + value + o + " ");
+            } else {
+                response += (op + " " + value + o + " ");
+            }
+        }
+
+        return response;
     }
 
 }
