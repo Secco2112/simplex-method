@@ -133,6 +133,8 @@ function delete_variable() {
 
 function calculate() {
     $(".options .calculate").on("click", function() {
+        $(".overlay-on-calculate, .calc-separator").addClass("show");
+
         var self = this,
             variables = [];
         
@@ -208,6 +210,36 @@ function calculate() {
         simplex.setOriginalInequalityRestrictions(original_inequality_restrictions);
         simplex.setInequalityRestrictions(inequality_restrictions);
 
-        console.log(simplex);
+        
+        // Mostrar dados de view
+        showFormattedData();
     });
+}
+
+
+function showFormattedData() {
+    var body_height = $("body").height(),
+        current_height = $(".wrapper-content .content").height();
+    
+    $(".wrapper-content .content").animate(
+        {
+            height: body_height + current_height
+        },
+        500
+    );
+    // setTimeout(function() {
+    //     $(".wrapper-content .content").attr("style", "height: calc(100vh + " + current_height + "px)");
+    //     $("html, body").animate(
+    //         { scrollTop: current_height },
+    //         1000,
+    //         function() {
+    //             $(".formatted-values").css("marginTop", "180px");
+
+                
+
+    //             setTimeout(function() {
+    //                 $(".formatted-values").addClass("show");
+    //             }, 500);
+    //         });
+    // }, 500);
 }

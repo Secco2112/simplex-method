@@ -15,6 +15,8 @@
         <div class="content">
             <h1 class="title">Simplex</h1>
             <form id="form-data" action="" method="post" onsubmit="return false;">
+                <div class="overlay-on-calculate"></div>
+
                 <div class="header">
                     <h3>Modelo:</h3>
                 </div>
@@ -127,6 +129,19 @@
                     <button class="calculate btn btn-primary">Calcular</button>
                 </div>
             </form>
+
+            <hr class="calc-separator" />
+
+            <div class="formatted-values">
+                <div class="objective-function">
+                    <h5 class="item-title">Função objetivo:</h5>
+                    <div class="list">
+                        <span id="original">Max Z = 120x1 + 160x2</span>
+                        <span id="sep">-></span>
+                        <span id="formatted">Z - 120x1 - 160x2 = 0</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 </body>

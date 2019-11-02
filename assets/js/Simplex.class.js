@@ -63,4 +63,9 @@ class Simplex{
         return this.clearances;
     }
 
+    getFormattedOriginalObjetiveFunction() {
+        var of = this.original_objective_function;
+        console.log(of);
+    }
+
 }
