@@ -101,4 +101,66 @@ class Simplex{
         return response;
     }
 
+    getFormattedOriginalInequalityRestrictions() {
+        var ir = this.original_inequality_restrictions;
+        var response = [];
+        
+        for(var i in ir) {
+            var r = "",
+                it = 0;
+            for(var j in ir[i]) {
+                var key = j,
+                    value = ir[i][j];
+
+                if(key != "b" && value != 0) {
+                    var op = value > 0? "+": "-";
+                    value = (value == 1 || value == -1? "": Math.abs(value));
+
+                    if(it++ == 0) {
+                        r += ((op == "-"? op: "") + value + key + " ");
+                    } else {
+                        r += (op + " " + value + key + " ");
+                    }
+                }
+            }
+
+            r += "<= " + ir[i]["b"];
+            
+            response.push(r);
+        }
+
+        return response;
+    }
+
+    getFormattedInequalityRestrictions() {
+        var ir = this.inequality_restrictions;
+        var response = [];
+        
+        for(var i in ir) {
+            var r = "",
+                it = 0;
+            for(var j in ir[i]) {
+                var key = j,
+                    value = ir[i][j];
+
+                if(key != "b" && value != 0) {
+                    var op = value > 0? "+": "-";
+                    value = (value == 1 || value == -1? "": Math.abs(value));
+
+                    if(it++ == 0) {
+                        r += ((op == "-"? op: "") + value + key + " ");
+                    } else {
+                        r += (op + " " + value + key + " ");
+                    }
+                }
+            }
+
+            r += "= " + ir[i]["b"];
+            
+            response.push(r);
+        }
+
+        return response;
+    }
+
 }

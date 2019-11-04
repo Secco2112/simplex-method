@@ -226,6 +226,17 @@ function showFormattedData() {
 
         var formatted_oof = simplex.getFormattedOriginalObjetiveFunction();
         var formatted_of = simplex.getFormattedObjectiveFunction();
+        var formatted_oir = simplex.getFormattedOriginalInequalityRestrictions(),
+            formatted_ir = simplex.getFormattedInequalityRestrictions(),
+            html_formatted_ir = "";
+
+        $.each(formatted_oir, function(i, ir) {
+            html_formatted_ir += "<div class='ir' data-index='" + i + "'>";
+                html_formatted_ir += "<span id='original'>" + ir + "</span>";
+                html_formatted_ir += "<span id='sep'>-></span>";
+                html_formatted_ir += "<span id='formatted'>" + formatted_ir[i] + "</span>";
+            html_formatted_ir += "</div>";
+        });
 
         $("html, body").animate(
             { scrollTop: current_height },
@@ -236,6 +247,7 @@ function showFormattedData() {
                 // Aplicar valores
                 $(".formatted-values .objective-function #original").text(formatted_oof);
                 $(".formatted-values .objective-function #formatted").text(formatted_of);
+                $(".formatted-values .inequality-restrictions .list").html(html_formatted_ir);
 
                 setTimeout(function() {
                     $(".formatted-values").addClass("show");

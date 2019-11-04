@@ -160,7 +160,7 @@ body{
             .formatted-values{
                 display: flex;
                 justify-content: center;
-                align-items: center;
+                flex-direction: column;
                 border: 1px solid #e4e4e4;
                 border-radius: 4px;
                 max-width: 610px;
@@ -182,6 +182,17 @@ body{
                 &.show{
                     opacity: 1;
                     visibility: visible;
+                }
+                .inequality-restrictions{
+                    margin-top: 15px;
+                    .list{
+                        flex-direction: column;
+                        align-items: flex-start;
+                        .ir{
+                            display: flex;
+                            align-items: center;
+                        }
+                    }
                 }
             }
         }

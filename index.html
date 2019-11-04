@@ -6,8 +6,8 @@
     <title>Simplex</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link href="https://fonts.googleapis.com/css?family=Palanquin:100,200,300,400,500,600,700&display=swap" rel="stylesheet">
-    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <link rel='stylesheet' type='text/css' href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link href="assets/css/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel='stylesheet' type='text/css' href="assets/css/bootstrap.min.css">
     <link rel='stylesheet' type='text/css' media='screen' href='assets/css/main.css'>
 </head>
 <body>
@@ -136,17 +136,21 @@
                 <div class="objective-function">
                     <h5 class="item-title">Função objetivo:</h5>
                     <div class="list">
-                        <span id="original">Max Z = 120x1 + 160x2</span>
+                        <span id="original"></span>
                         <span id="sep">-></span>
-                        <span id="formatted">Z - 120x1 - 160x2 = 0</span>
+                        <span id="formatted"></span>
                     </div>
+                </div>
+                <div class="inequality-restrictions">
+                    <h5 class="item-title">Restrições de inequação:</h5>
+                    <div class="list"></div>
                 </div>
             </div>
         </div>
     </main>
 </body>
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
     <script src="assets/js/Simplex.class.js"></script>
     <script src='assets/js/script.js'></script>
 </html>
