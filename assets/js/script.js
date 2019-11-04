@@ -218,8 +218,7 @@ function calculate() {
 
 
 function showFormattedData() {
-    var body_height = $("body").height(),
-        current_height = $(".wrapper-content .content").height();
+    var current_height = $(".wrapper-content .content").height();
 
     setTimeout(function() {
         $(".wrapper-content .content").attr("style", "height: calc(100vh + " + current_height + "px)");
@@ -251,7 +250,22 @@ function showFormattedData() {
 
                 setTimeout(function() {
                     $(".formatted-values").addClass("show");
+
+                    setTimeout(function() {
+                        $(".formatted-values").next().addClass("show");
+
+                        mountMainTable();
+                    }, 1000);
                 }, 500);
             });
     }, 500);
+}
+
+
+function mountMainTable() {
+    var html = "<div class='main-table'>";
+    html += "</div>";
+
+
+    $(html).insertAfter($(".formatted-values").next());
 }
