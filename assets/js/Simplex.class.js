@@ -1,12 +1,22 @@
 class Simplex{
 
     constructor() {
+        this.current_iteration = 1;
         this.variables = null;
         this.original_objective_function = null;
         this.objective_function = null;
         this.original_inequality_restrictions = null;
         this.inequality_restrictions = null;
         this.clearances = null;
+    }
+
+    setCurrentIteration(current_iteration) {
+        this.current_iteration = current_iteration;
+        return this;
+    }
+
+    getCurrentIteration() {
+        return this.current_iteration;
     }
 
     setVariables(variables) {

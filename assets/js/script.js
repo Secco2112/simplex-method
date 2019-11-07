@@ -3,6 +3,7 @@ var simplex = new Simplex();
 var IR_HTML = '<li class="inequality-restriction"><i class="fa fa-times delete-inequality-restriction"></i><div data-index="1" class="variable-group">    <input name="x1" type="text" class="form-control" />    <span> x1 </span></div><select class="form-control" name="operation">    <option value="plus">+</option>    <option value="subtract">-</option></select><div data-index="2" class="variable-group">    <input name="x2" type="text" class="form-control" />    <span> x2 </span></div><select class="form-control" name="equality">    <option value="greater-equal">>=</option>    <option value="smaller-equal"><=</option>    <option value="equal">=</option>    <option value="greater">></option>    <option value="smaller"><</option></select><input name="b" type="text" class="form-control" /></li>';
 var OPERATION_SELECT_HTML = '<select class="form-control" name="operation"><option value="plus">+</option><option value="subtract">-</option></select>';
 var EQUALITY_SELECT_HTML = '<select class="form-control" name="equality"><option value="smaller-equal"><=</option><option value="greater-equal">>=</option><option value="equal">=</option><option value="smaller"><</option><option value="greater">></option></select>';
+var NEXT_STEP_HTML = '<div class="next-step"><i class="fa fa-angle-double-down"></i></div>';
 
 $(document).ready(function() {
     add_ir();
@@ -241,7 +242,7 @@ function showFormattedData() {
             { scrollTop: current_height },
             1000,
             function() {
-                $(".formatted-values").css("marginTop", "180px");
+                $(".formatted-values").css("marginTop", "280px");
 
                 // Aplicar valores
                 $(".formatted-values .objective-function #original").text(formatted_oof);
@@ -256,16 +257,77 @@ function showFormattedData() {
 
                         mountMainTable();
                     }, 1000);
-                }, 500);
+                }, 1000);
             });
-    }, 500);
+    }, 1000);
 }
 
 
 function mountMainTable() {
-    var html = "<div class='main-table'>";
+    var headers = ['Z'];
+    $.each(simplex.getVariables(), function(i, v) {
+        headers.push(v);
+    });
+    $.each(simplex.getClearances(), function(i, c) {
+        headers.push(c);
+    });
+    headers.push('b');
+
+    var objective_function = simplex.getObjectiveFunction(),
+        inequality_restrictions = simplex.getInequalityRestrictions();
+
+    var html = "<div class='main-table' id='main-table-" + simplex.getCurrentIteration() + "'>";
+        html += "<table class='table'>";
+            html += "<thead>";
+                html += "<tr>";
+                    html += "<th scope='col'></th>";
+                    $.each(headers, function(i, h) {
+                        html += "<th scope='col'>" + h + "</th>";
+                    });
+                html += "</tr>";
+            html += "</thead>";
+            html += "<tbody>";
+                html += "<tr>";
+                    html += "<td scope='col'>Z</td>";
+                    $.each(headers, function(i, h) {
+                        if(objective_function.hasOwnProperty(h)) {
+                            html += "<td scope='row'>" + objective_function[h] + "</td>";
+                        } else {
+                            html += "<td scope='row'>0</td>";
+                        }
+                    });
+                html += "</tr>";
+                $.each(inequality_restrictions, function(i, ir) {
+                    html += "<tr>";
+                        html += "<td scope='row'>L" + (i+1) + "</td>";
+                        $.each(headers, function(j, h) {
+                            if(ir.hasOwnProperty(h)) {
+                                html += "<td scope='row'>" + ir[h] + "</td>";
+                            } else {
+                                html += "<td scope='row'>0</td>";
+                            }
+                        });
+                    html += "</tr>";
+                });
+            html += "</tbody>";
+        html += "</table>";
     html += "</div>";
 
 
     $(html).insertAfter($(".formatted-values").next());
+    
+    $("#main-table-" + simplex.getCurrentIteration()).after(NEXT_STEP_HTML);
+
+    setTimeout(() => {
+        $("#main-table-" + simplex.getCurrentIteration()).addClass("show");
+
+        setTimeout(() => {
+            findPivotElement();
+        }, 1000);
+    }, 1000);
+}
+
+
+function findPivotElement() {
+    console.log(true);
 }
