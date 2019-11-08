@@ -8,6 +8,8 @@ class Simplex{
         this.original_inequality_restrictions = null;
         this.inequality_restrictions = null;
         this.clearances = null;
+        this.main_table = null;
+        this.pivot_number = null;
     }
 
     setCurrentIteration(current_iteration) {
@@ -71,6 +73,24 @@ class Simplex{
 
     getClearances() {
         return this.clearances;
+    }
+
+    setMainTable(main_table) {
+        this.main_table = main_table;
+        return this;
+    }
+
+    getMainTable() {
+        return this.main_table;
+    }
+
+    setPivotNumber(pivot_number) {
+        this.pivot_number = pivot_number;
+        return this;
+    }
+
+    getPivotNumber() {
+        return this.pivot_number;
     }
 
     getFormattedOriginalObjetiveFunction() {

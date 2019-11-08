@@ -220,6 +220,11 @@ body{
                     opacity: 1;
                     visibility: visible;
                 }
+                .table{
+                    td, th{
+                        text-align: center;
+                    }
+                }
             }
         }
     }

@@ -274,7 +274,8 @@ function mountMainTable() {
     headers.push('b');
 
     var objective_function = simplex.getObjectiveFunction(),
-        inequality_restrictions = simplex.getInequalityRestrictions();
+        inequality_restrictions = simplex.getInequalityRestrictions(),
+        main_table = [];
 
     var html = "<div class='main-table' id='main-table-" + simplex.getCurrentIteration() + "'>";
         html += "<table class='table'>";
@@ -289,29 +290,40 @@ function mountMainTable() {
             html += "<tbody>";
                 html += "<tr>";
                     html += "<td scope='col'>Z</td>";
+                    var z_line = [];
                     $.each(headers, function(i, h) {
                         if(objective_function.hasOwnProperty(h)) {
                             html += "<td scope='row'>" + objective_function[h] + "</td>";
+                            z_line.push(objective_function[h]);
                         } else {
                             html += "<td scope='row'>0</td>";
+                            z_line.push(0);
                         }
                     });
+                    main_table.push(z_line);
                 html += "</tr>";
                 $.each(inequality_restrictions, function(i, ir) {
                     html += "<tr>";
                         html += "<td scope='row'>L" + (i+1) + "</td>";
+                        var i_line = [];
                         $.each(headers, function(j, h) {
                             if(ir.hasOwnProperty(h)) {
                                 html += "<td scope='row'>" + ir[h] + "</td>";
+                                i_line.push(ir[h]);
                             } else {
                                 html += "<td scope='row'>0</td>";
+                                i_line.push(0);
                             }
                         });
+                        main_table.push(i_line);
                     html += "</tr>";
                 });
             html += "</tbody>";
         html += "</table>";
     html += "</div>";
+
+
+    simplex.setMainTable(main_table);
 
 
     $(html).insertAfter($(".formatted-values").next());
@@ -329,5 +341,31 @@ function mountMainTable() {
 
 
 function findPivotElement() {
-    console.log(true);
+    var pivot_number = null,
+        biggest_negative_number = null,
+        line_index = 0,
+        column_index = 0,
+        main_table = simplex.getMainTable();
+
+    biggest_negative_number = main_table[0][0];
+    for(var i=1; i<main_table[0].length; i++) {
+        if(main_table[0][i] < biggest_negative_number) {
+            biggest_negative_number = main_table[0][i];
+            column_index = i;
+        }
+    }
+
+    var lowest_column_number = main_table[1][main_table[1].length-1] / main_table[1][column_index];
+    if(main_table.length > 2) {
+        for(var i=2; i<main_table.length; i++) {
+            var aux = main_table[i][main_table[i].length-1] / main_table[i][column_index];
+            if(aux < lowest_column_number) {
+                lowest_column_number = aux;
+                line_index = i;
+            }
+        }
+    }
+
+    pivot_number = main_table[line_index][column_index];
+    
 }
