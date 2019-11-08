@@ -367,5 +367,5 @@ function findPivotElement() {
     }
 
     pivot_number = main_table[line_index][column_index];
-    
+    simplex.setPivotNumber(pivot_number);
 }
