@@ -1,4 +1,7 @@
 var simplex = new Simplex();
+simplex.setDecimalPlaces(2);
+
+const ANIMATION_TIMEOUT = 100;
 
 var IR_HTML = '<li class="inequality-restriction"><i class="fa fa-times delete-inequality-restriction"></i><div data-index="1" class="variable-group">    <input name="x1" type="text" class="form-control" />    <span> x1 </span></div><select class="form-control" name="operation">    <option value="plus">+</option>    <option value="subtract">-</option></select><div data-index="2" class="variable-group">    <input name="x2" type="text" class="form-control" />    <span> x2 </span></div><select class="form-control" name="equality">    <option value="greater-equal">>=</option>    <option value="smaller-equal"><=</option>    <option value="equal">=</option>    <option value="greater">></option>    <option value="smaller"><</option></select><input name="b" type="text" class="form-control" /></li>';
 var OPERATION_SELECT_HTML = '<select class="form-control" name="operation"><option value="plus">+</option><option value="subtract">-</option></select>';
@@ -240,7 +243,7 @@ function showFormattedData() {
 
         $("html, body").animate(
             { scrollTop: current_height },
-            1000,
+            ANIMATION_TIMEOUT,
             function() {
                 $(".formatted-values").css("marginTop", "280px");
 
@@ -256,10 +259,10 @@ function showFormattedData() {
                         $(".formatted-values").next().addClass("show");
 
                         mountMainTable();
-                    }, 1000);
-                }, 1000);
+                    }, ANIMATION_TIMEOUT);
+                }, ANIMATION_TIMEOUT);
             });
-    }, 1000);
+    }, ANIMATION_TIMEOUT);
 }
 
 
@@ -326,17 +329,19 @@ function mountMainTable() {
     simplex.setMainTable(main_table);
 
 
-    $(html).insertAfter($(".formatted-values").next());
+    if($("#main-table-" + simplex.getCurrentIteration()).length == 0) {
+        $(html).insertAfter($(".formatted-values").next());
     
-    $("#main-table-" + simplex.getCurrentIteration()).after(NEXT_STEP_HTML);
+        $("#main-table-" + simplex.getCurrentIteration()).after(NEXT_STEP_HTML);
 
-    setTimeout(() => {
-        $("#main-table-" + simplex.getCurrentIteration()).addClass("show");
+        setTimeout(function() {
+            $("#main-table-" + simplex.getCurrentIteration()).addClass("show");
 
-        setTimeout(() => {
-            findPivotElement();
-        }, 1000);
-    }, 1000);
+            setTimeout(function() {
+                findPivotElement();
+            }, ANIMATION_TIMEOUT);
+        }, ANIMATION_TIMEOUT);
+    }
 }
 
 
@@ -368,4 +373,173 @@ function findPivotElement() {
 
     pivot_number = main_table[line_index][column_index];
     simplex.setPivotNumber(pivot_number);
+    simplex.setPivotNumberCoord({x: line_index, y: column_index});
+
+    // Pinta linha e coluna
+    setTimeout(function() {
+        var table = $("#main-table-" + simplex.getCurrentIteration());
+
+        $(table).find("thead tr th:nth-child(" + (column_index + 2) + ")").css("backgroundColor", "#f3f2f2");
+        $(table).find("tbody tr").each(function(i, tr) {
+            $(tr).find("td:nth-child(" + (column_index + 2) + ")").css("backgroundColor", "#f3f2f2");
+        });
+
+        $(table).find("tbody tr:nth-child(" + (line_index + 1) + ") td").css("backgroundColor", "#f3f2f2");
+
+        // Pinta elemento pivô
+        setTimeout(function() {
+            $(table).find("tbody tr:nth-child(" + (line_index + 1) + ") td:nth-child(" + (column_index + 2) + ")").css("backgroundColor", "#dadada");
+
+            generateNewPivotLine();
+        }, ANIMATION_TIMEOUT);
+    }, ANIMATION_TIMEOUT);
+}
+
+
+function generateNewPivotLine() {
+    var current_line = [],
+        new_pivot_line = [],
+        table = $("#main-table-" + simplex.getCurrentIteration()),
+        pivot_number_coord = simplex.getPivotNumberCoord();
+
+    $(table).find("tbody tr:nth-child(" + (pivot_number_coord.x + 1) + ") td").each(function(i ,td) {
+        if(i > 0) {
+            var v = simplex.format($(td).text().trim());
+            current_line.push(v);
+        }
+    });
+
+    for(var i=0; i<current_line.length; i++) {
+        var v = current_line[i] / simplex.getPivotNumber();
+        v = simplex.format(v);
+        new_pivot_line.push(v);
+    }
+
+    simplex.setNewPivotLine(new_pivot_line);
+
+    
+    // Setar valor na tabela principal
+    var mt = simplex.getMainTable();
+    mt[pivot_number_coord.x] = new_pivot_line;
+    simplex.setMainTable(mt);
+
+
+    var html = "<div class='new-pivot-line' id='new-pivot-line-" + simplex.getCurrentIteration() + "'>";
+            html += "<h4>Nova linha pivô</h4>";
+            html += "<table class='table'>";
+                html += "<tbody>";
+                    html += "<tr>";
+                        html += "<td></td>";
+                        $.each(current_line, function(i, v) {
+                            html += "<td>" + v + "</td>";
+                        });
+                    html += "</tr>";
+                    html += "<tr>";
+                        html += "<td>/ " + simplex.getPivotNumber() + "</td>";
+                        $.each(new_pivot_line, function(i, v) {
+                            html += "<td>" + v + "</td>";
+                        });
+                    html += "<tr>";
+                html += "</tbody>";
+            html += "</table>";
+        html += "</div>";
+
+    $(html).insertAfter($(table).next());
+
+
+    setTimeout(function() {
+        $("#main-table-" + simplex.getCurrentIteration()).next().addClass("show");
+
+        $("#new-pivot-line-" + simplex.getCurrentIteration()).addClass("show");
+
+        $("#new-pivot-line-" + simplex.getCurrentIteration()).after(NEXT_STEP_HTML);
+
+        setTimeout(function() {
+            $("#new-pivot-line-" + simplex.getCurrentIteration()).next().addClass("show");
+
+            calculateNewLines();
+        });
+    }, ANIMATION_TIMEOUT);
+}
+
+
+function calculateNewLines() {
+    var lines_indexes = [],
+        all_indexes = [],
+        pivot_number_coord = simplex.getPivotNumberCoord(),
+        main_table = simplex.getMainTable(),
+        table_lenght = main_table.length,
+        new_pivot_line = simplex.getNewPivotLine();
+
+    for(var i=0; i<table_lenght; i++) all_indexes.push(i);
+    lines_indexes = all_indexes.filter(function(i) {
+        return i != pivot_number_coord.x;
+    });
+
+
+    $.each(lines_indexes, function(i, line) {
+        var element = (i == 0? $("#new-pivot-line-" + simplex.getCurrentIteration()): $(document).find(".new-line:last-child").next()),
+            line_text = (line == 0? "Z": line).toString();
+        var mult_number = main_table[line][pivot_number_coord.x] * -1;
+
+        var line_multiply = [];
+        $.each(new_pivot_line, function(j, npl) {
+            var v = npl * mult_number;
+            v = simplex.format(v);
+            line_multiply.push(v);
+        });
+
+        var new_line = [];
+        for(var j=0; j<line_multiply.length; j++) {
+            var v = line_multiply[j] + main_table[line][j];
+            v = simplex.format(v);
+            new_line.push(v);
+        }
+
+        var html = "<div class='new-line new-line-" + line_text.toLowerCase() + "' id='new-line-" + line_text.toLowerCase() + "-" + simplex.getCurrentIteration() + "'>";
+                html += "<h4>Nova linha " + line_text + "</h4>";
+                html += "<table class='table'>";
+                    html += "<tbody>";
+                        html += "<tr>";
+                            html += "<td></td>";
+                            $.each(new_pivot_line, function(j, npl) {
+                                html += "<td>" + npl + "</td>";
+                            });
+                        html += "</tr>";
+                        html += "<tr>";
+                            html += "<td>* " + (mult_number) + "</td>";
+                            for(var k=0; k<line_multiply.length; k++) {
+                                html += "<td>" + line_multiply[k] + "</td>";
+                            }
+                        html += "</tr>";
+                        html += "<tr>";
+                            html += "<td>+ " + (line_text) + "</td>";
+                            for(var k=0; k<main_table[line].length; k++) {
+                                html += "<td>" + main_table[line][k] + "</td>";
+                            }
+                        html += "</tr>";
+                        html += "<tr>";
+                            html += "<td>NL" + line_text +"</td>";
+                            for(var k=0; k<new_line.length; k++) {
+                                html += "<td><strong>" + new_line[k] + "</strong></td>";
+                            }
+                        html += "</tr>";
+                    html += "</tbody>";
+                html += "</table>";
+            html += "</div>";
+
+        main_table[line] = new_line;
+        simplex.setMainTable(main_table);
+
+        $(element).after(html);
+
+        setTimeout(function() {
+            $("#new-line-" + line_text.toLowerCase() + "-" + simplex.getCurrentIteration()).addClass("show");
+            $("#new-line-" + line_text.toLowerCase() + "-" + simplex.getCurrentIteration()).after(NEXT_STEP_HTML);
+            
+            setTimeout(function() {
+                $("#new-line-" + line_text.toLowerCase() + "-" + simplex.getCurrentIteration()).next().addClass("show");
+            }, ANIMATION_TIMEOUT);
+        }, ANIMATION_TIMEOUT);
+    });
 }

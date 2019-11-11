@@ -1,7 +1,9 @@
 class Simplex{
 
     constructor() {
-        this.current_iteration = 1;
+        this.current_iteration = 1
+        this.decimal_places = 2;
+
         this.variables = null;
         this.original_objective_function = null;
         this.objective_function = null;
@@ -10,6 +12,8 @@ class Simplex{
         this.clearances = null;
         this.main_table = null;
         this.pivot_number = null;
+        this.pivot_number_coord = null;
+        this.new_pivot_line = null;
     }
 
     setCurrentIteration(current_iteration) {
@@ -19,6 +23,15 @@ class Simplex{
 
     getCurrentIteration() {
         return this.current_iteration;
+    }
+
+    setDecimalPlaces(dp) {
+        this.decimal_places = dp;
+        return this;
+    }
+
+    getDecimalPlaces() {
+        return this.decimal_places;
     }
 
     setVariables(variables) {
@@ -91,6 +104,28 @@ class Simplex{
 
     getPivotNumber() {
         return this.pivot_number;
+    }
+
+    setPivotNumberCoord(pivot_number_coord) {
+        this.pivot_number_coord = pivot_number_coord;
+        return this.pivot_number_coord;
+    }
+
+    getPivotNumberCoord() {
+        return this.pivot_number_coord;
+    }
+
+    setNewPivotLine(new_pivot_line) {
+        this.new_pivot_line = new_pivot_line;
+        return this;
+    }
+
+    getNewPivotLine() {
+        return this.new_pivot_line;
+    }
+
+    format(number, decimal_places=null) {
+        return !isNaN(+number)? Number(((+number).toFixed(decimal_places || this.decimal_places) * 1).toString()): Number(number);
     }
 
     getFormattedOriginalObjetiveFunction() {
