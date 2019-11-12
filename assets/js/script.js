@@ -8,6 +8,12 @@ var OPERATION_SELECT_HTML = '<select class="form-control" name="operation"><opti
 var EQUALITY_SELECT_HTML = '<select class="form-control" name="equality"><option value="smaller-equal"><=</option><option value="greater-equal">>=</option><option value="equal">=</option><option value="smaller"><</option><option value="greater">></option></select>';
 var NEXT_STEP_HTML = '<div class="next-step"><i class="fa fa-angle-double-down"></i></div>';
 
+
+function scrollToBottom() {
+    $("html, body").animate({ scrollTop: $(document).height() }, 1000);
+}
+
+
 $(document).ready(function() {
     add_ir();
     delete_ir();
@@ -331,6 +337,8 @@ function mountMainTable() {
 
     if($("#main-table-" + simplex.getCurrentIteration()).length == 0) {
         $(html).insertAfter($(".formatted-values").next());
+
+        scrollToBottom();
     
         $("#main-table-" + simplex.getCurrentIteration()).after(NEXT_STEP_HTML);
 
@@ -446,6 +454,8 @@ function generateNewPivotLine() {
 
     $(html).insertAfter($(table).next());
 
+    scrollToBottom();
+
 
     setTimeout(function() {
         $("#main-table-" + simplex.getCurrentIteration()).next().addClass("show");
@@ -478,7 +488,7 @@ function calculateNewLines() {
 
 
     $.each(lines_indexes, function(i, line) {
-        var element = (i == 0? $("#new-pivot-line-" + simplex.getCurrentIteration()): $(document).find(".new-line:last-child").next()),
+        var element = (i == 0? $("#new-pivot-line-" + simplex.getCurrentIteration()): $(document).find(".new-line")),
             line_text = (line == 0? "Z": line).toString();
         var mult_number = main_table[line][pivot_number_coord.x] * -1;
 
@@ -531,15 +541,65 @@ function calculateNewLines() {
         main_table[line] = new_line;
         simplex.setMainTable(main_table);
 
+        if(element.length > 1) {
+            element = element[element.length - 1];
+        }
+
         $(element).after(html);
 
         setTimeout(function() {
-            $("#new-line-" + line_text.toLowerCase() + "-" + simplex.getCurrentIteration()).addClass("show");
-            $("#new-line-" + line_text.toLowerCase() + "-" + simplex.getCurrentIteration()).after(NEXT_STEP_HTML);
+            $(element).next().addClass("show");
+            $(element).after(NEXT_STEP_HTML);
             
             setTimeout(function() {
-                $("#new-line-" + line_text.toLowerCase() + "-" + simplex.getCurrentIteration()).next().addClass("show");
+                $(element).next().addClass("show");
             }, ANIMATION_TIMEOUT);
         }, ANIMATION_TIMEOUT);
     });
+
+    mountEndTable();
+}
+
+
+function mountEndTable() {
+    var headers = ['Z'];
+    $.each(simplex.getVariables(), function(i, v) {
+        headers.push(v);
+    });
+    $.each(simplex.getClearances(), function(i, c) {
+        headers.push(c);
+    });
+    headers.push('b');
+
+    var main_table = simplex.getMainTable();
+
+    var html = "<div class='last-table' id='last-table-" + simplex.getCurrentIteration() + "'>";
+        html += "<table class='table'>";
+            html += "<thead>";
+                html += "<tr>";
+                    html += "<th scope='col'></th>";
+                    $.each(headers, function(i, h) {
+                        html += "<th scope='col'>" + h + "</th>";
+                    });
+                html += "</tr>";
+            html += "</thead>";
+            html += "<tbody>";
+                $.each(main_table, function(i, row) {
+                    html += "<tr>";
+                        html += "<td>" + (i == 0? "Z": "L" + i) + "</td>";
+                        $.each(row, function(j, k) {
+                            html += "<td>" + k + "</td>";
+                        });
+                    html += "</tr>";
+                });
+            html += "</tbody>";
+        html += "</table>";
+    html += "</div>";
+
+    var last_new_line = $(".new-line").last();
+    $(last_new_line).next().after(html);
+    
+    setTimeout(function() {
+        $("#last-table-" + simplex.getCurrentIteration()).addClass("show");
+    }, ANIMATION_TIMEOUT);
 }
