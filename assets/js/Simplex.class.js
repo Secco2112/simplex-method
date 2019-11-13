@@ -14,6 +14,9 @@ class Simplex{
         this.pivot_number = null;
         this.pivot_number_coord = null;
         this.new_pivot_line = null;
+        this.basic_variables = null;
+        this.not_basic_variables = null;
+        this.z_value = null;
     }
 
     setCurrentIteration(current_iteration) {
@@ -124,6 +127,24 @@ class Simplex{
         return this.new_pivot_line;
     }
 
+    setBasicVariables(bv) {
+        this.basic_variables = bv;
+        return this;
+    }
+
+    getBasicVariables() {
+        return this.basic_variables;
+    }
+
+    setNotBasicVariables(nbv) {
+        this.not_basic_variables = nbv;
+        return this;
+    }
+
+    getNotBasicVariables() {
+        return this.not_basic_variables;
+    }
+
     format(number, decimal_places=null) {
         return !isNaN(+number)? Number(((+number).toFixed(decimal_places || this.decimal_places) * 1).toString()): Number(number);
     }
@@ -226,6 +247,79 @@ class Simplex{
         }
 
         return response;
+    }
+
+    findBasicVariables() {
+        var main_table = this.getMainTable(),
+            valid_fields = [],
+            headers = [],
+            bv = {};
+        
+        for(var i=0; i<this.getVariables().length; i++) {
+            headers.push(this.getVariables()[i]);
+        }
+        for(var i=0; i<this.getClearances().length; i++) {
+            headers.push(this.getClearances()[i]);
+        }
+
+        for(var i=1; i<main_table.length; i++) {
+            var l =[];
+            for(var j=1; j<main_table[i].length-1; j++) {
+                l.push(main_table[i][j]);
+            }
+            valid_fields.push(l);
+        }
+
+        var row = valid_fields[0];
+        for(var j=0; j<row.length; j++) {
+            if(row[j] == 0 || row[j] == 1) {
+                var check = 1, line_one = null;
+                for(var k=1; k<valid_fields.length; k++) {
+                    if(valid_fields[k][j] == 1 || valid_fields[k][j] == 0) {
+                        check++;
+                        if(valid_fields[k][j] == 1) {
+                            line_one = main_table[k+1][main_table[0].length-1];
+                        }
+                    }
+                }
+
+                if(row[j] == 1) {
+                    line_one = main_table[1][main_table[0].length-1];
+                }
+
+                if(check == valid_fields.length) {
+                    bv[headers[j]] = line_one;
+                }
+            }
+        }
+
+        return bv;
+    }
+
+    findNotBasicVariables() {
+        var main_table = this.getMainTable(),
+            valid_fields = [],
+            headers = [],
+            nbv = {};
+        
+        for(var i=0; i<this.getVariables().length; i++) {
+            headers.push(this.getVariables()[i]);
+        }
+        for(var i=0; i<this.getClearances().length; i++) {
+            headers.push(this.getClearances()[i]);
+        }
+
+        for(var i=1; i<main_table[0].length-1; i++) {
+            valid_fields.push(main_table[0][i]);
+        }
+
+        for(var i=0; i<valid_fields.length; i++) {
+            if(valid_fields[i] != 0) {
+                nbv[headers[i]] = 0;
+            }
+        }
+
+        return nbv;
     }
 
 }

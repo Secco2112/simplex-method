@@ -574,6 +574,7 @@ function mountEndTable() {
     var main_table = simplex.getMainTable();
 
     var html = "<div class='last-table' id='last-table-" + simplex.getCurrentIteration() + "'>";
+        html += "<h4>Nova tabela</h4>";
         html += "<table class='table'>";
             html += "<thead>";
                 html += "<tr>";
@@ -601,5 +602,89 @@ function mountEndTable() {
     
     setTimeout(function() {
         $("#last-table-" + simplex.getCurrentIteration()).addClass("show");
+
+        $("#last-table-" + simplex.getCurrentIteration()).after(NEXT_STEP_HTML);
+
+        setTimeout(function() {
+            $("#last-table-" + simplex.getCurrentIteration()).next().addClass("show");
+            
+            calculate_variables();
+        }, ANIMATION_TIMEOUT);
+    }, ANIMATION_TIMEOUT);
+}
+
+function calculate_variables() {
+    var bv = {},
+        nvb = {},
+        main_table = simplex.getMainTable();
+
+    bv = simplex.findBasicVariables();
+    simplex.setBasicVariables(bv);
+
+    nbv = simplex.findNotBasicVariables();
+    simplex.setNotBasicVariables(nbv);
+
+    
+    var html = "<div class='show-variables' id='show-variables-" + simplex.getCurrentIteration() + "'>";
+            html += "<div class='basic-variables'>";
+                html += "<table class='table'>";
+                    html += "<thead>";
+                        html += "<tr>";
+                            html += "<th colspan='2'>Variáveis básicas</th>";
+                        html += "</tr>";
+                    html += "</thead>";
+                    html += "<tbody>";
+                        for(var i in bv) {
+                            html += "<tr>";
+                                html += "<td>" + i + "</td>";
+                                html += "<td>" + bv[i] + "</td>";
+                            html += "</tr>";
+                        }
+                    html += "</tbody>";
+                html += "</table>";
+            html += "</div>";
+
+            html += "<div class='not-basic-variables'>";
+                html += "<table class='table'>";
+                    html += "<thead>";
+                        html += "<tr>";
+                            html += "<th colspan='2'>Variáveis não básicas</th>";
+                        html += "</tr>";
+                    html += "</thead>";
+                    html += "<tbody>";
+                        for(var i in nbv) {
+                            html += "<tr>";
+                                html += "<td>" + i + "</td>";
+                                html += "<td>" + nbv[i] + "</td>";
+                            html += "</tr>";
+                        }
+                    html += "</tbody>";
+                html += "</table>";
+            html += "</div>";
+
+            html += "<div class='not-basic-variables'>";
+                html += "<table class='table'>";
+                    html += "<thead>";
+                        html += "<tr>";
+                            html += "<th colspan='2'>Valor de Z</th>";
+                        html += "</tr>";
+                    html += "</thead>";
+                    html += "<tbody>";
+                        html += "<tr>";
+                            html += "<td>Z</td>";
+                            html += "<td>" + main_table[0][main_table[0].length-1] + "</td>";
+                        html += "</tr>";
+                    html += "</tbody>";
+                html += "</table>";
+            html += "</div>";
+        html += "</div>";
+
+    $("#last-table-" + simplex.getCurrentIteration()).next().after(html);
+
+    setTimeout(function() {
+        // Checa se a solução é ótima
+        $("#show-variables-" + simplex.getCurrentIteration()).addClass("show");
+
+        
     }, ANIMATION_TIMEOUT);
 }

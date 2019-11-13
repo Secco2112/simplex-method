@@ -263,6 +263,30 @@ body{
                     }
                 }
             }
+            .show-variables{
+                display: flex;
+                justify-content: space-between;
+                margin-top: 40px;
+                opacity: 0;
+                visibility: hidden;
+                transition: 0.5s all ease-in-out;
+                &.show{
+                    opacity: 1;
+                    visibility: visible;
+                }
+                > div{
+                    width: 25%;
+                    table{
+                        th{
+                            font-weight: bold;
+                            text-align: center;
+                        }
+                        td{
+                            text-align: center;
+                        }
+                    }
+                }
+            }
         }
     }
 }
