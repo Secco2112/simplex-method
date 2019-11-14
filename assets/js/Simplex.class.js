@@ -270,6 +270,7 @@ class Simplex{
             valid_fields.push(l);
         }
 
+        // TE AMO CABEÇÃO <3
         var row = valid_fields[0];
         for(var j=0; j<row.length; j++) {
             if(row[j] == 0 || row[j] == 1) {
@@ -320,6 +321,21 @@ class Simplex{
         }
 
         return nbv;
+    }
+
+    isGoodSolution() {
+        var valid_fields = [],
+            main_table = this.getMainTable();
+
+        for(var i=1; i<main_table[0].length-1; i++) {
+            valid_fields.push(main_table[0][i]);
+        }
+
+        var check = valid_fields.filter(function(v) {
+            return v >= 0;
+        });
+
+        return check.length === valid_fields.length;
     }
 
 }

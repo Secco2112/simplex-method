@@ -1,7 +1,7 @@
 var simplex = new Simplex();
 simplex.setDecimalPlaces(2);
 
-const ANIMATION_TIMEOUT = 100;
+const ANIMATION_TIMEOUT = 1000;
 
 var IR_HTML = '<li class="inequality-restriction"><i class="fa fa-times delete-inequality-restriction"></i><div data-index="1" class="variable-group">    <input name="x1" type="text" class="form-control" />    <span> x1 </span></div><select class="form-control" name="operation">    <option value="plus">+</option>    <option value="subtract">-</option></select><div data-index="2" class="variable-group">    <input name="x2" type="text" class="form-control" />    <span> x2 </span></div><select class="form-control" name="equality">    <option value="greater-equal">>=</option>    <option value="smaller-equal"><=</option>    <option value="equal">=</option>    <option value="greater">></option>    <option value="smaller"><</option></select><input name="b" type="text" class="form-control" /></li>';
 var OPERATION_SELECT_HTML = '<select class="form-control" name="operation"><option value="plus">+</option><option value="subtract">-</option></select>';
@@ -353,11 +353,11 @@ function mountMainTable() {
 }
 
 
-function findPivotElement() {
+function findPivotElement(first_iteration=true) {
     var pivot_number = null,
         biggest_negative_number = null,
-        line_index = 0,
-        column_index = 0,
+        line_index = 1,
+        column_index = 1,
         main_table = simplex.getMainTable();
 
     biggest_negative_number = main_table[0][0];
@@ -373,19 +373,28 @@ function findPivotElement() {
         for(var i=2; i<main_table.length; i++) {
             var aux = main_table[i][main_table[i].length-1] / main_table[i][column_index];
             if(aux < lowest_column_number) {
-                lowest_column_number = aux;
-                line_index = i;
+                if(aux > 0) {
+                    lowest_column_number = aux;
+                    line_index = i;
+                }
             }
         }
     }
 
+    if(!first_iteration) simplex.setCurrentIteration(simplex.getCurrentIteration() + 1);
+    
     pivot_number = main_table[line_index][column_index];
     simplex.setPivotNumber(pivot_number);
     simplex.setPivotNumberCoord({x: line_index, y: column_index});
 
     // Pinta linha e coluna
     setTimeout(function() {
-        var table = $("#main-table-" + simplex.getCurrentIteration());
+        if(first_iteration) {
+            var table = $("#main-table-" + simplex.getCurrentIteration());
+        } else {
+            var id = "#last-table-" + (simplex.getCurrentIteration() - 1).toString();
+            var table = $(document).find(id);
+        }
 
         $(table).find("thead tr th:nth-child(" + (column_index + 2) + ")").css("backgroundColor", "#f3f2f2");
         $(table).find("tbody tr").each(function(i, tr) {
@@ -397,18 +406,24 @@ function findPivotElement() {
         // Pinta elemento pivô
         setTimeout(function() {
             $(table).find("tbody tr:nth-child(" + (line_index + 1) + ") td:nth-child(" + (column_index + 2) + ")").css("backgroundColor", "#dadada");
-
-            generateNewPivotLine();
+            
+            generateNewPivotLine(first_iteration);
         }, ANIMATION_TIMEOUT);
     }, ANIMATION_TIMEOUT);
 }
 
 
-function generateNewPivotLine() {
+function generateNewPivotLine(first_iteration=true) {
     var current_line = [],
         new_pivot_line = [],
-        table = $("#main-table-" + simplex.getCurrentIteration()),
         pivot_number_coord = simplex.getPivotNumberCoord();
+
+    if(first_iteration) {
+        var table = $("#main-table-" + simplex.getCurrentIteration());
+    } else {
+        var id = "#last-table-" + (simplex.getCurrentIteration() - 1).toString();
+        var table = $(document).find(id);
+    }
 
     $(table).find("tbody tr:nth-child(" + (pivot_number_coord.x + 1) + ") td").each(function(i ,td) {
         if(i > 0) {
@@ -452,13 +467,20 @@ function generateNewPivotLine() {
             html += "</table>";
         html += "</div>";
 
-    $(html).insertAfter($(table).next());
+    if(first_iteration) {
+        var element = $(table).next()
+        $(html).insertAfter(element);
+    } else {
+        var element = $(table).next().next();
+        $(html).insertAfter(element);
+    }
+
 
     scrollToBottom();
 
 
     setTimeout(function() {
-        $("#main-table-" + simplex.getCurrentIteration()).next().addClass("show");
+        $(element).next().addClass("show");
 
         $("#new-pivot-line-" + simplex.getCurrentIteration()).addClass("show");
 
@@ -467,13 +489,13 @@ function generateNewPivotLine() {
         setTimeout(function() {
             $("#new-pivot-line-" + simplex.getCurrentIteration()).next().addClass("show");
 
-            calculateNewLines();
+            calculateNewLines(first_iteration);
         });
     }, ANIMATION_TIMEOUT);
 }
 
 
-function calculateNewLines() {
+function calculateNewLines(first_iteration=true) {
     var lines_indexes = [],
         all_indexes = [],
         pivot_number_coord = simplex.getPivotNumberCoord(),
@@ -490,7 +512,7 @@ function calculateNewLines() {
     $.each(lines_indexes, function(i, line) {
         var element = (i == 0? $("#new-pivot-line-" + simplex.getCurrentIteration()): $(document).find(".new-line")),
             line_text = (line == 0? "Z": line).toString();
-        var mult_number = main_table[line][pivot_number_coord.x] * -1;
+        var mult_number = main_table[line][pivot_number_coord.y] * -1;
 
         var line_multiply = [];
         $.each(new_pivot_line, function(j, npl) {
@@ -557,11 +579,11 @@ function calculateNewLines() {
         }, ANIMATION_TIMEOUT);
     });
 
-    mountEndTable();
+    mountEndTable(first_iteration);
 }
 
 
-function mountEndTable() {
+function mountEndTable(first_iteration=true) {
     var headers = ['Z'];
     $.each(simplex.getVariables(), function(i, v) {
         headers.push(v);
@@ -608,12 +630,12 @@ function mountEndTable() {
         setTimeout(function() {
             $("#last-table-" + simplex.getCurrentIteration()).next().addClass("show");
             
-            calculate_variables();
+            calculate_variables(first_iteration);
         }, ANIMATION_TIMEOUT);
     }, ANIMATION_TIMEOUT);
 }
 
-function calculate_variables() {
+function calculate_variables(first_iteration=true) {
     var bv = {},
         nvb = {},
         main_table = simplex.getMainTable();
@@ -644,7 +666,7 @@ function calculate_variables() {
                 html += "</table>";
             html += "</div>";
 
-            html += "<div class='not-basic-variables'>";
+            html += "<div class='not-basic-variables' id='not-basic-variables-" + simplex.getCurrentIteration() + "'>";
                 html += "<table class='table'>";
                     html += "<thead>";
                         html += "<tr>";
@@ -662,7 +684,7 @@ function calculate_variables() {
                 html += "</table>";
             html += "</div>";
 
-            html += "<div class='not-basic-variables'>";
+            html += "<div class='z-value' id='z-value-" + simplex.getCurrentIteration() + "'>";
                 html += "<table class='table'>";
                     html += "<thead>";
                         html += "<tr>";
@@ -685,6 +707,21 @@ function calculate_variables() {
         // Checa se a solução é ótima
         $("#show-variables-" + simplex.getCurrentIteration()).addClass("show");
 
-        
+        var good_solution = simplex.isGoodSolution();
+
+        if(good_solution) {
+            var html = '<div style="margin-top: 30px;"><span style="text-align: center; display: block; color: #006b08; font-weight: bold;">Solução ótima</span></div>';
+            setTimeout(() => {
+                $("#z-value-" + simplex.getCurrentIteration()).append(html);
+            }, ANIMATION_TIMEOUT);
+            return;
+        } else {
+            var html = '<div style="margin-top: 30px;"><span style="text-align: center; display: block; color: red; font-weight: bold;">Solução não ótima</span></div>';
+            setTimeout(() => {
+                $("#z-value-" + simplex.getCurrentIteration()).append(html);
+
+                findPivotElement(false);
+            }, ANIMATION_TIMEOUT);
+        }
     }, ANIMATION_TIMEOUT);
 }
