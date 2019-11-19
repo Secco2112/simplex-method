@@ -163,15 +163,18 @@ function calculate() {
         $(objective_function_el).find(".variable-group").each(function(i, vg) {
             if($(vg).prev().attr("name") == "operation") {
                 var value = $(vg).find("input").val().trim();
+                if(value == "") value = "1";
                 var signal = $(vg).prev().val();
                 if(signal == "subtract") {
                     value = (value[0] == "-"? value.replace("-", ""): "-" + value);
                 }
-                original_objective_function[variables[i]] = parseInt(value);
-                objective_function[variables[i]] = parseInt(value) * -1;
+                original_objective_function[variables[i]] = simplex.format(value);
+                objective_function[variables[i]] = simplex.format(value) * -1;
             } else {
-                original_objective_function[variables[i]] = parseInt($(vg).find("input").val().trim());
-                objective_function[variables[i]] = parseInt($(vg).find("input").val().trim()) * -1;
+                var value = $(vg).find("input").val().trim();
+                if(value == "") value = "1";
+                original_objective_function[variables[i]] = simplex.format(value);
+                objective_function[variables[i]] = simplex.format(value) * -1;
             }
         });
 
@@ -195,17 +198,20 @@ function calculate() {
             $(li).find(".variable-group").each(function(j, vg) {
                 if($(vg).prev().attr("name") == "operation") {
                     var value = $(vg).find("input").val().trim();
+                    if(value == "") value = "1";
                     var signal = $(vg).prev().val();
                     if(signal == "subtract") {
                         value = (value[0] == "-"? value.replace("-", ""): "-" + value);
                     }
-                    ir[variables[j]] = parseInt(value);
+                    ir[variables[j]] = simplex.format(value);
                 } else {
-                    ir[variables[j]] = parseInt($(vg).find("input").val().trim());
+                    var value = $(vg).find("input").val().trim();
+                    if(value == "") value = "1";
+                    ir[variables[j]] = simplex.format(value);
                 }
             });
 
-            ir["b"] = parseInt($(li).find("input[name=b]").val().trim());
+            ir["b"] = simplex.format($(li).find("input[name=b]").val().trim());
 
             original_inequality_restrictions.push(ir);
 
@@ -337,8 +343,6 @@ function mountMainTable() {
 
     if($("#main-table-" + simplex.getCurrentIteration()).length == 0) {
         $(html).insertAfter($(".formatted-values").next());
-
-        scrollToBottom();
     
         $("#main-table-" + simplex.getCurrentIteration()).after(NEXT_STEP_HTML);
 
@@ -569,6 +573,8 @@ function calculateNewLines(first_iteration=true) {
 
         $(element).after(html);
 
+        scrollToBottom();
+
         setTimeout(function() {
             $(element).next().addClass("show");
             $(element).after(NEXT_STEP_HTML);
@@ -621,6 +627,8 @@ function mountEndTable(first_iteration=true) {
 
     var last_new_line = $(".new-line").last();
     $(last_new_line).next().after(html);
+
+    scrollToBottom();
     
     setTimeout(function() {
         $("#last-table-" + simplex.getCurrentIteration()).addClass("show");
@@ -702,6 +710,8 @@ function calculate_variables(first_iteration=true) {
         html += "</div>";
 
     $("#last-table-" + simplex.getCurrentIteration()).next().after(html);
+
+    scrollToBottom();
 
     setTimeout(function() {
         // Checa se a solução é ótima
