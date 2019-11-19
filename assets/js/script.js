@@ -9,6 +9,9 @@ var EQUALITY_SELECT_HTML = '<select class="form-control" name="equality"><option
 var NEXT_STEP_HTML = '<div class="next-step"><i class="fa fa-angle-double-down"></i></div>';
 
 
+/*
+    'Scrolla' até o fim da página
+*/
 function scrollToBottom() {
     $("html, body").animate({ scrollTop: $(document).height() }, 1000);
 }
@@ -25,6 +28,9 @@ $(document).ready(function() {
 });
 
 
+/*
+    Função usada para o evento de adicionar uma nova restrição de inequação
+*/
 function add_ir() {
     $(document).on("click", ".add-restriction-inequality", function() {
         var el = $(IR_HTML),
@@ -47,6 +53,9 @@ function add_ir() {
     });
 }
 
+/*
+    Função usada para o evento de remover uma restrição de inequação
+*/
 function delete_ir() {
     $(document).on("click", ".delete-inequality-restriction", function() {
         var counter = $(".list-inequality-restrictions > li").length;
@@ -59,6 +68,9 @@ function delete_ir() {
     });
 }
 
+/*
+    Função usada para o evento de adicionar uma nova variável
+*/
 function add_variable() {
     $(".add-variable").on("click", function() {
         var self = this,
@@ -93,6 +105,9 @@ function add_variable() {
     });
 }
 
+/*
+    Função usada para o evento de remover uma variável
+*/
 function delete_variable() {
     $(document).on("click", ".delete-variable", function() {
         var index = $(this).parent().data("index"),
@@ -141,6 +156,11 @@ function delete_variable() {
 }
 
 
+/*
+    Função chamada na hora de calcular o método simplex. Ela separa as variáveis, folgas,
+    função objetivo e restrições de inequação presentes no formulário de entrada. Após isso,
+    aplica-se todas ao objeto da class Simplex.
+*/
 function calculate() {
     $(".options .calculate").on("click", function() {
         $(".overlay-on-calculate, .calc-separator").addClass("show");
@@ -232,7 +252,11 @@ function calculate() {
     });
 }
 
-
+/*
+    Função usada para mostrar os dados formatados após a inserção dos mesmos no formulário.
+    Ela exibe uma caixa na tela com a função objetivo e as restrições de inequação pós
+    processamento.
+*/
 function showFormattedData() {
     var current_height = $(".wrapper-content .content").height();
 
@@ -278,6 +302,10 @@ function showFormattedData() {
 }
 
 
+/*
+    Monta os dados da tabela principal, com a função objetivo, folgas, variáveis e restrições
+    de inequação, e exibe para o usuário.
+*/
 function mountMainTable() {
     var headers = ['Z'];
     $.each(simplex.getVariables(), function(i, v) {
@@ -357,6 +385,10 @@ function mountMainTable() {
 }
 
 
+/*
+    Cálcula e encontra o elemento pivô dentro da tabela principal construída acima.
+    O mesmo é marcado na tabela.
+*/
 function findPivotElement(first_iteration=true) {
     var pivot_number = null,
         biggest_negative_number = null,
@@ -417,6 +449,10 @@ function findPivotElement(first_iteration=true) {
 }
 
 
+/*
+    Calcula e gera a nova linha pivô. Após isso, monta-se uma tabela com os dados da mesma, que será
+    utilizada para calcular cada uma das novas linhas.
+*/
 function generateNewPivotLine(first_iteration=true) {
     var current_line = [],
         new_pivot_line = [],
@@ -499,6 +535,10 @@ function generateNewPivotLine(first_iteration=true) {
 }
 
 
+/*
+    Calcula cada uma das novas linhas a partir da linha pivô gerada anteriormente. As mesmas são
+    inseridas em tabelas individuais e exibidas ao usuário.
+*/
 function calculateNewLines(first_iteration=true) {
     var lines_indexes = [],
         all_indexes = [],
@@ -589,6 +629,9 @@ function calculateNewLines(first_iteration=true) {
 }
 
 
+/*
+    Monta a tabela final do exercício, após calculada a linha pivô e as novas linhas.
+*/
 function mountEndTable(first_iteration=true) {
     var headers = ['Z'];
     $.each(simplex.getVariables(), function(i, v) {
@@ -643,6 +686,10 @@ function mountEndTable(first_iteration=true) {
     }, ANIMATION_TIMEOUT);
 }
 
+/*
+    Calcula e exibe um painel com as variáveis básicas, não básicas e o valor de Z da iteração atual.
+    Se o programa exigir uma nova iteração, a chamada é feita dentro dessa função.
+*/
 function calculate_variables(first_iteration=true) {
     var bv = {},
         nvb = {},

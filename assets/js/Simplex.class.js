@@ -1,22 +1,22 @@
 class Simplex{
 
     constructor() {
-        this.current_iteration = 1
-        this.decimal_places = 2;
+        this.current_iteration = 1; // Iteração atual
+        this.decimal_places = 2; // Número de casas decimais para os cálculos
 
-        this.variables = null;
-        this.original_objective_function = null;
-        this.objective_function = null;
-        this.original_inequality_restrictions = null;
-        this.inequality_restrictions = null;
-        this.clearances = null;
-        this.main_table = null;
-        this.pivot_number = null;
-        this.pivot_number_coord = null;
-        this.new_pivot_line = null;
-        this.basic_variables = null;
-        this.not_basic_variables = null;
-        this.z_value = null;
+        this.variables = null; // Vetor com as variáveis
+        this.original_objective_function = null; // Objeto da função objetivo original
+        this.objective_function = null; // Função objetivo pós processada
+        this.original_inequality_restrictions = null; // Objeto com as restrições de inequação originais
+        this.inequality_restrictions = null; // Restrições de inequação pós processadas
+        this.clearances = null; // Vetor com as folgas
+        this.main_table = null; // Matriz contendo a tabela principal do exercício
+        this.pivot_number = null; // Número pivô
+        this.pivot_number_coord = null; // Posições do número pivô na tabela principal (this.main_table)
+        this.new_pivot_line = null; // Nova linha pivô
+        this.basic_variables = null; // Variáveis básicas
+        this.not_basic_variables = null; // Variáveis não básicas
+        this.z_value = null; // Valor de Z final
     }
 
     setCurrentIteration(current_iteration) {
@@ -145,10 +145,17 @@ class Simplex{
         return this.not_basic_variables;
     }
 
+    /*
+        Função auxiliar utilizada para formatar os valores do exercício. Ela utiliza o número de
+        casas decimais do objeto da classe, ou o parâmetro 'decimal_places'.
+    */
     format(number, decimal_places=null) {
         return !isNaN(+number)? Number(((+number).toFixed(decimal_places || this.decimal_places) * 1).toString()): Number(number);
     }
-
+    
+    /*
+        Retorna uma string com a função objetivo original
+    */
     getFormattedOriginalObjetiveFunction() {
         var of = this.original_objective_function,
             response = "Max. Z = ";
@@ -168,6 +175,9 @@ class Simplex{
         return response;
     }
 
+    /*
+        Retorna uma string com a função objetivo formatada
+    */
     getFormattedObjectiveFunction() {
         var of = this.objective_function,
             response = "";
@@ -187,6 +197,9 @@ class Simplex{
         return response;
     }
 
+    /*
+        Retorna um vetor de string's com as restrições de inequação originais
+    */
     getFormattedOriginalInequalityRestrictions() {
         var ir = this.original_inequality_restrictions;
         var response = [];
@@ -218,6 +231,9 @@ class Simplex{
         return response;
     }
 
+    /*
+        Retorna um vetor de string's com as restrições de inequação formatadas
+    */
     getFormattedInequalityRestrictions() {
         var ir = this.inequality_restrictions;
         var response = [];
@@ -249,6 +265,9 @@ class Simplex{
         return response;
     }
 
+    /*
+        Encontra as variáveis básicas do exercício, iterando os campos da tabela principal (this.main_table)
+    */
     findBasicVariables() {
         var main_table = this.getMainTable(),
             valid_fields = [],
@@ -270,7 +289,6 @@ class Simplex{
             valid_fields.push(l);
         }
 
-        // TE AMO CABEÇÃO <3
         var row = valid_fields[0];
         for(var j=0; j<row.length; j++) {
             if(row[j] == 0 || row[j] == 1) {
@@ -297,6 +315,9 @@ class Simplex{
         return bv;
     }
 
+    /*
+        Encontra as variáveis não básicas do exercício, iterando os campos da tabela principal (this.main_table)
+    */
     findNotBasicVariables() {
         var main_table = this.getMainTable(),
             valid_fields = [],
@@ -323,6 +344,9 @@ class Simplex{
         return nbv;
     }
 
+    /*
+        Verifica se foi encontrada uma solução ótima para o exercício
+    */
     isGoodSolution() {
         var valid_fields = [],
             main_table = this.getMainTable();
